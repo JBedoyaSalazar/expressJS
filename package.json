@@ -4,7 +4,8 @@
   "description": "Curso express NodeJs",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch app.js"
+    "dev": "node --watch app.js",
+    "start": "node app.js"
   },
   "keywords": [
     "expressjs"
@@ -13,10 +14,8 @@
   "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
+    "dotenv": "^17.4.2",
     "express": "^5.2.1"
-  },
-  "dependencies": {
-    
   },
   "repository": {
     "type": "git",
