@@ -4,13 +4,26 @@
   "description": "Curso express NodeJs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node --watch app.js"
   },
-  "keywords": ["expressjs"],
+  "keywords": [
+    "expressjs"
+  ],
   "author": "Jefred Bedoya <jefred03salazar@gmail.com>",
   "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
     "express": "^5.2.1"
-  }
+  },
+  "dependencies": {
+    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JBedoyaSalazar/expressJS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JBedoyaSalazar/expressJS/issues"
+  },
+  "homepage": "https://github.com/JBedoyaSalazar/expressJS#readme"
 }
