@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/JBedoyaSalazar/expressJS/issues"
   },
-  "homepage": "https://github.com/JBedoyaSalazar/expressJS#readme"
+  "homepage": "https://github.com/JBedoyaSalazar/expressJS#readme",
+  "dependencies": {
+    "body-parser": "^2.2.2"
+  }
 }
