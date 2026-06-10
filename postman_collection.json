@@ -1,0 +1,134 @@
+{
+  "info": {
+    "name": "Express JS API",
+    "description": "Colección Postman generada a partir de las rutas definidas en app.js",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET /",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /users/:id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/{{id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "{{id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /search",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/search?terms=&category=",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "search"
+          ],
+          "query": [
+            {
+              "key": "terms",
+              "value": "",
+              "description": "Término de búsqueda"
+            },
+            {
+              "key": "category",
+              "value": "",
+              "description": "Categoría de búsqueda"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /form",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"\",\n  \"email\": \"\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/form",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "form"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /api/data",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/data",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "data"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

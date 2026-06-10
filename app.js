@@ -32,9 +32,9 @@ app.get('/search', (req, res) => {
 })
 
 app.post('/form', (req, res) => {
-    const name = req.body.nombre || `Anonimo`
+    const name = req.body.name || `Anonimo`
     const email = req.body.email || `N/G`
-    res.json({
+    res.status(201).json({
         message: `Datos recibidos con exito`,
         data: {
             name,
