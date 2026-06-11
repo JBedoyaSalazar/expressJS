@@ -4,7 +4,8 @@ const bodyParser = require('body-parser')
 
 const fs = require('fs')
 const path = require('path')
-const { error } = require('console')
+const { validateUserData, validateUserUpdate, checkIdCollision } = require('./utils/validateUser')
+
 const usersFilePath = path.join(__dirname, 'users.json')
 
 const app = express()
@@ -74,109 +75,93 @@ app.get('/users', (req, res) => {
 })
 
 app.post('/users', (req, res) => {
-    const { name, email } = req.body
-    const validation = validateUser(name, email)
+    const newUser = req.body;
 
+    const validation = validateUserData(newUser);
     if (!validation.valid) {
-        return res.status(400).json({
-            error: validation.message
-        })
+        return res.status(400).json({ error: validation.message });
     }
 
-    const newUser = req.body
     fs.readFile(usersFilePath, 'utf-8', (err, data) => {
         if (err) {
-            return res.status(500).json({
-                error: `Error con conexion de datos:
-                ${err}
-                `
-            })
+            return res.status(500).json({ error: `Error con conexion de datos: ${err}` });
         }
 
-        const users = JSON.parse(data)
-        users.push(newUser)
+        const users = JSON.parse(data);
+
+        if (checkIdCollision(newUser.id, users)) {
+            return res.status(409).json({ error: `User with id ${newUser.id} already exists` });
+        }
+
+        users.push(newUser);
         fs.writeFile(usersFilePath, JSON.stringify(users, null, 2), (err) => {
             if (err) {
-                return res.status(500).json({
-                    error: `Error con conexion de datos:
-                    ${err}
-                    `
-                })
+                return res.status(500).json({ error: `Error con conexion de datos: ${err}` });
             }
-            res.status(201).json(newUser)
-        })
-    })
-})
+            return res.status(201).json(newUser);
+        });
+    });
+});
 
 app.put('/users/:id', (req, res) => {
-    const userId = parseInt(req.params.id, 10)
-    const updatedUser = req.body
+    const userId = parseInt(req.params.id, 10);
+    const updatedUser = req.body;
 
-    const { name, email } = req.body
-    const validation = validateUser(name, email)
-
+    const validation = validateUserUpdate(updatedUser);
     if (!validation.valid) {
-        return res.status(400).json({
-            error: validation.message
-        })
+        return res.status(400).json({ error: validation.message });
     }
 
     fs.readFile(usersFilePath, 'utf-8', (err, data) => {
         if (err) {
-            return res.status(500).json({
-                Error: `Error desde el server ${err}`
-            })
+            return res.status(500).json({ error: `Error desde el server: ${err}` });
         }
 
-        let users = JSON.parse(data)
+        let users = JSON.parse(data);
 
-        const userExists = users.some(
-            user => user.id === userId
-        )
-
+        const userExists = users.some(user => user.id === userId);
         if (!userExists) {
-            return res.status(404).json({
-                error: 'User not found'
-            })
+            return res.status(404).json({ error: 'User not found' });
         }
-        users = users.map(user => (user.id === userId ? { ...user, ...updatedUser } : user))
-        fs.writeFile(
-            usersFilePath,
-            JSON.stringify(users, null, 2),
-            (err) => {
-                if (err) {
-                    return res.status(500).json({
-                        Error: `Error al actualizar el usuario: ${err}`
-                    })
-                }
-                res.json(updatedUser)
-            })
-    })
 
+        let finalUpdatedUser;
+        users = users.map(user => {
+            if (user.id === userId) {
+                finalUpdatedUser = { ...user, ...updatedUser, id: userId };
+                return finalUpdatedUser;
+            }
+            return user;
+        });
+
+        fs.writeFile(usersFilePath, JSON.stringify(users, null, 2), (err) => {
+            if (err) {
+                return res.status(500).json({ error: `Error al actualizar el usuario: ${err}` });
+            }
+            return res.json(finalUpdatedUser);
+        });
+    });
+});
+
+app.delete('/users/:id', (req, res) => {
+    const userId = parseInt(req.params.id, 10)
+    fs.readFile(usersFilePath, 'utf-8', (err, data) => {
+        if (err) {
+            return res.status(500).json({ error: `Error desde el server: ${err}` });
+        }
+
+        let users = JSON.parse(data);
+        users = users.filter(user => user.id !== userId);
+
+        fs.writeFile(usersFilePath, JSON.stringify(users, null, 2), (err) => {
+            if (err) {
+                return res.status(500).json({ error: `Error al eliminar el usuario: ${err}` });
+            }
+            return res.status(204).send();
+        });
+    })
 })
 
 app.listen(PORT, () => {
     console.log(`Listening On http://localhost:${PORT}`)
-})
+});
 
-function validateUser(name, email) {
-    if (!name || name.length < 3 || name.length > 20) {
-        return {
-            valid: false,
-            message: 'El nombre debe tener entre 3 y 20 caracteres'
-        }
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-    if (!emailRegex.test(email)) {
-        return {
-            valid: false,
-            message: 'Invalid email format'
-        }
-    }
-
-    return {
-        valid: true
-    }
-}
