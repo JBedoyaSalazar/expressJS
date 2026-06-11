@@ -1,16 +1,17 @@
 require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
-
 const fs = require('fs')
 const path = require('path')
 const { validateUserData, validateUserUpdate, checkIdCollision } = require('./utils/validateUser')
+const { LoggerMiddleware } = require('./middlewares/logger')
 
 const usersFilePath = path.join(__dirname, 'users.json')
 
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(LoggerMiddleware)
 
 const PORT = process.env.PORT
 
