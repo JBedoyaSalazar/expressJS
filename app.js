@@ -5,6 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const { validateUserData, validateUserUpdate, checkIdCollision } = require('./utils/validateUser')
 const { LoggerMiddleware } = require('./middlewares/logger')
+const ErrorHandlerMiddleware = require('./middlewares/errorHandler')
 
 const usersFilePath = path.join(__dirname, 'users.json')
 
@@ -161,6 +162,9 @@ app.delete('/users/:id', (req, res) => {
         });
     })
 })
+
+
+app.use(ErrorHandlerMiddleware)
 
 app.listen(PORT, () => {
     console.log(`Listening On http://localhost:${PORT}`)
