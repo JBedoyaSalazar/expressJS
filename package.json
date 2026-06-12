@@ -15,7 +15,8 @@
   "type": "commonjs",
   "devDependencies": {
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "prisma": "^6.19.3"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   },
   "homepage": "https://github.com/JBedoyaSalazar/expressJS#readme",
   "dependencies": {
-    "body-parser": "^2.2.2"
+    "@prisma/client": "^6.19.3",
+    "pg": "^8.21.0"
   }
 }

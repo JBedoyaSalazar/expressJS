@@ -1,6 +1,8 @@
 require('dotenv').config()
 const express = require('express')
-const bodyParser = require('body-parser')
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
+
 const fs = require('fs')
 const path = require('path')
 const { validateUserData, validateUserUpdate, checkIdCollision } = require('./utils/validateUser')
@@ -10,8 +12,8 @@ const ErrorHandlerMiddleware = require('./middlewares/errorHandler')
 const usersFilePath = path.join(__dirname, 'users.json')
 
 const app = express()
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(LoggerMiddleware)
 
 const PORT = process.env.PORT
@@ -161,6 +163,15 @@ app.delete('/users/:id', (req, res) => {
             return res.status(204).send();
         });
     })
+})
+
+app.get('/db-users', async (req, res) => {
+    try {
+        const users = await prisma.user.findMany()
+        res.json(users)
+    } catch (error) {
+        return res.status(500).json({ error: `Error desde el server: ${error}` })
+    }
 })
 
 
