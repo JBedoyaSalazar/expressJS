@@ -8,11 +8,11 @@ const prisma = new PrismaClient()
 
 const fs = require('fs')
 const path = require('path')
-const { validateUserData, validateUserUpdate, checkIdCollision } = require('./utils/validateUser')
-const { validateRegisterData } = require('./utils/validateRegister')
-const { LoggerMiddleware } = require('./middlewares/logger')
-const ErrorHandlerMiddleware = require('./middlewares/errorHandler')
-const { authenticateToken } = require('./middlewares/auth')
+const { validateUserData, validateUserUpdate, checkIdCollision } = require('./src/utils/validateUser')
+const { validateRegisterData } = require('./src/utils/validateRegister')
+const { LoggerMiddleware } = require('./src/middlewares/logger')
+const ErrorHandlerMiddleware = require('./src/middlewares/errorHandler')
+const { authenticateToken } = require('./src/middlewares/auth')
 
 const usersFilePath = path.join(__dirname, 'users.json')
 
