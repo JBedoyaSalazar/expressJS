@@ -8,6 +8,7 @@ const path = require('path')
 const { validateUserData, validateUserUpdate, checkIdCollision } = require('./utils/validateUser')
 const { LoggerMiddleware } = require('./middlewares/logger')
 const ErrorHandlerMiddleware = require('./middlewares/errorHandler')
+const { authenticateToken } = require('./middlewares/auth')
 
 const usersFilePath = path.join(__dirname, 'users.json')
 
@@ -172,6 +173,10 @@ app.get('/db-users', async (req, res) => {
     } catch (error) {
         return res.status(500).json({ error: `Error desde el server: ${error}` })
     }
+})
+
+app.get('/secret-profile', authenticateToken, (req,res) => {
+    res.send('Esta ruta es privada y solo usuarios autenticados')
 })
 
 
