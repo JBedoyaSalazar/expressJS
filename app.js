@@ -171,7 +171,18 @@ app.delete('/users/:id', (req, res) => {
 
 app.get('/db-users', async (req, res) => {
     try {
-        const users = await prisma.user.findMany()
+        const users = await prisma.user.findMany({
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                fullName: true,
+                role: true,
+                isActive: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        })
         res.json(users)
     } catch (error) {
         return res.status(500).json({ error: `Error desde el server: ${error}` })
