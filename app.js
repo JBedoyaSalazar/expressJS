@@ -1,11 +1,14 @@
 require('dotenv').config()
 const express = require('express')
+const bcrypt = require('bcrypt')
+
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 const fs = require('fs')
 const path = require('path')
 const { validateUserData, validateUserUpdate, checkIdCollision } = require('./utils/validateUser')
+const { validateRegisterData } = require('./utils/validateRegister')
 const { LoggerMiddleware } = require('./middlewares/logger')
 const ErrorHandlerMiddleware = require('./middlewares/errorHandler')
 const { authenticateToken } = require('./middlewares/auth')
@@ -177,6 +180,73 @@ app.get('/db-users', async (req, res) => {
 
 app.get('/secret-profile', authenticateToken, (req,res) => {
     res.send('Esta ruta es privada y solo usuarios autenticados')
+})
+
+app.post('/register', async (req, res) => {
+    try {
+        const validation = validateRegisterData(req.body)
+
+        if (!validation.valid) {
+            return res.status(400).json({
+                error: validation.message
+            })
+        }
+
+        const {
+            username,
+            email,
+            password,
+            fullName
+        } = req.body
+
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { username },
+                    { email }
+                ]
+            }
+        })
+
+        if (existingUser) {
+            return res.status(409).json({
+                error: 'Username or email already exists'
+            })
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10)
+
+        const user = await prisma.user.create({
+            data: {
+                username,
+                email,
+                password: hashedPassword,
+                fullName
+            },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                fullName: true,
+                role: true,
+                isActive: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        })
+
+        return res.status(201).json({
+            message: 'User created successfully',
+            user
+        })
+
+    } catch (error) {
+        console.error(error)
+
+        return res.status(500).json({
+            error: 'Internal server error'
+        })
+    }
 })
 
 
